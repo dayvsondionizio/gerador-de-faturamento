@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
@@ -80,9 +80,22 @@ const INITIAL_DATA: BillingFormData = {
 };
 
 export default function App() {
-  const [step, setStep] = useState<'form' | 'loading' | 'report'>('form');
+  const [step, setStep] = useState<'auth' | 'form' | 'loading' | 'report'>('auth');
   const [formData, setFormData] = useState<BillingFormData>(INITIAL_DATA);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
   const [formKey, setFormKey] = useState(0);
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === '165760') {
+      setStep('form');
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+      setPasswordInput('');
+    }
+  };
   const [isConfirmingClear, setIsConfirmingClear] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isLogoLoaded, setIsLogoLoaded] = useState(false);
@@ -273,6 +286,49 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       <AnimatePresence mode="wait">
+        {step === 'auth' && (
+          <motion.div
+            key="auth"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="min-h-screen flex items-center justify-center p-4 relative z-50"
+          >
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 w-full max-w-sm text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-navy-900 rounded-2xl mb-6 shadow-lg shadow-navy-900/20">
+                <FileText className="text-white w-8 h-8" />
+              </div>
+              <h1 className="text-2xl font-bold text-navy-900 mb-2">Acesso Restrito</h1>
+              <p className="text-slate-500 mb-8 text-sm">Digite a senha para acessar o gerador</p>
+
+              <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => {
+                      setPasswordInput(e.target.value);
+                      if (passwordError) setPasswordError(false);
+                    }}
+                    placeholder="Senha de acesso"
+                    className={`w-full px-4 py-3 bg-slate-50 border ${passwordError ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-navy-200'} rounded-xl focus:ring-2 outline-none transition-all text-center text-lg tracking-[0.3em] font-mono`}
+                    autoFocus
+                  />
+                  {passwordError && (
+                    <p className="text-red-500 text-sm mt-2 font-medium">Senha incorreta.</p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-navy-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-navy-800 transition-all active:scale-95 shadow-md shadow-navy-900/20"
+                >
+                  Acessar Gerador
+                </button>
+              </form>
+            </div>
+          </motion.div>
+        )}
+
         {step === 'form' && (
           <motion.div
             key={`form-${formKey}`}
@@ -291,8 +347,8 @@ export default function App() {
                     clearData();
                   }}
                   className={`flex items-center gap-2 transition-all text-sm font-bold px-5 py-2.5 rounded-xl shadow-md border cursor-pointer active:scale-95 w-full md:w-auto justify-center ${isConfirmingClear
-                      ? 'bg-red-600 text-white border-red-700 animate-pulse'
-                      : 'bg-white text-slate-500 hover:text-red-600 border-slate-200'
+                    ? 'bg-red-600 text-white border-red-700 animate-pulse'
+                    : 'bg-white text-slate-500 hover:text-red-600 border-slate-200'
                     }`}
                 >
                   <Trash2 className="w-4 h-4" />
