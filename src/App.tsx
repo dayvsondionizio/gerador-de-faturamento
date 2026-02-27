@@ -2,14 +2,14 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
-import { 
-  FileText, 
-  Building2, 
-  MapPin, 
-  Calendar, 
-  DollarSign, 
-  UserCheck, 
-  Printer, 
+import {
+  FileText,
+  Building2,
+  MapPin,
+  Calendar,
+  DollarSign,
+  UserCheck,
+  Printer,
   Download,
   ArrowLeft,
   Loader2,
@@ -90,12 +90,12 @@ export default function App() {
   // Pre-load logo as Base64 via proxy to bypass CORS
   useEffect(() => {
     const proxyUrl = '/api/logo-proxy';
-    
+
     const loadImage = async () => {
       try {
         const response = await fetch(proxyUrl);
         if (!response.ok) throw new Error('Proxy fetch failed');
-        
+
         const blob = await response.blob();
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -141,7 +141,7 @@ export default function App() {
   const addMonth = () => {
     const lastMonth = formData.monthlyBilling[formData.monthlyBilling.length - 1];
     let nextMonth = '';
-    
+
     if (lastMonth && lastMonth.month.includes('/')) {
       const [m, y] = lastMonth.month.split('/').map(Number);
       let newM = m + 1;
@@ -207,9 +207,9 @@ export default function App() {
         margin: 0,
         filename: `Relatorio_Faturamento_${formData.companyName.replace(/\s+/g, '_') || 'Empresa'}.pdf`,
         image: { type: 'jpeg' as const, quality: 1.0 },
-        html2canvas: { 
+        html2canvas: {
           scale: 3, // Reduced scale slightly to see if it helps with the blank page
-          useCORS: true, 
+          useCORS: true,
           allowTaint: true,
           letterRendering: true,
           logging: false,
@@ -254,7 +254,7 @@ export default function App() {
     } else {
       return monthStr;
     }
-    
+
     if (isNaN(m) || isNaN(y)) return monthStr;
     const monthAbbr = MONTHS_SHORT_BR[m - 1];
     const yearShort = y.toString().slice(-2);
@@ -290,13 +290,12 @@ export default function App() {
                     e.stopPropagation();
                     clearData();
                   }}
-                  className={`flex items-center gap-2 transition-all text-sm font-bold px-5 py-2.5 rounded-xl shadow-md border cursor-pointer active:scale-95 w-full md:w-auto justify-center ${
-                    isConfirmingClear 
-                      ? 'bg-red-600 text-white border-red-700 animate-pulse' 
+                  className={`flex items-center gap-2 transition-all text-sm font-bold px-5 py-2.5 rounded-xl shadow-md border cursor-pointer active:scale-95 w-full md:w-auto justify-center ${isConfirmingClear
+                      ? 'bg-red-600 text-white border-red-700 animate-pulse'
                       : 'bg-white text-slate-500 hover:text-red-600 border-slate-200'
-                  }`}
+                    }`}
                 >
-                  <Trash2 className="w-4 h-4" /> 
+                  <Trash2 className="w-4 h-4" />
                   {isConfirmingClear ? 'Clique para Confirmar' : 'Limpar Dados'}
                 </button>
               </div>
@@ -370,7 +369,7 @@ export default function App() {
                   <Calendar className="w-5 h-5 text-navy-600" />
                   <h2 className="font-semibold text-navy-900">Período e Localização</h2>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Início</label>
                     <input
@@ -425,14 +424,14 @@ export default function App() {
                     <DollarSign className="w-5 h-5 text-navy-600" />
                     <h2 className="font-semibold text-navy-900">Demonstrativo de Faturamento Mensal</h2>
                   </div>
-                  <button 
+                  <button
                     onClick={addMonth}
                     className="flex items-center gap-1 text-xs font-bold text-navy-600 hover:text-navy-800 transition-colors bg-navy-50 px-4 py-2 rounded-full border border-navy-100"
                   >
                     <Plus className="w-3 h-3" /> Adicionar Mês
                   </button>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {formData.monthlyBilling.map((item, index) => (
                     <div key={index} className="flex flex-col sm:flex-row sm:items-end gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
@@ -461,7 +460,7 @@ export default function App() {
                           />
                         </div>
                       </div>
-                      <button 
+                      <button
                         onClick={() => removeMonth(index)}
                         className="w-full sm:w-auto p-2 text-slate-300 hover:text-red-500 transition-colors bg-white rounded-xl border border-slate-100 flex justify-center items-center"
                         title="Remover mês"
@@ -470,7 +469,7 @@ export default function App() {
                       </button>
                     </div>
                   ))}
-                  
+
                   {formData.monthlyBilling.length === 0 && (
                     <div className="col-span-full py-16 text-center border-2 border-dashed border-slate-100 rounded-3xl">
                       <div className="bg-slate-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -569,7 +568,7 @@ export default function App() {
             className="bg-slate-200 min-h-screen py-6 md:py-10 px-2 md:px-4 print:p-0 print:bg-white"
           >
             <div className="max-w-[210mm] mx-auto mb-8 flex flex-col md:flex-row gap-4 justify-between items-center print:hidden">
-              <button 
+              <button
                 type="button"
                 onClick={() => setStep('form')}
                 className="w-full md:w-auto flex items-center justify-center gap-2 text-navy-900 font-bold hover:bg-white/80 px-5 py-2.5 rounded-xl transition-all border border-navy-900/10 bg-white/50"
@@ -577,7 +576,7 @@ export default function App() {
                 <ArrowLeft className="w-5 h-5" /> Voltar ao Formulário
               </button>
               <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-                <button 
+                <button
                   type="button"
                   onClick={downloadPDF}
                   disabled={isGeneratingPDF}
@@ -601,132 +600,132 @@ export default function App() {
               <div className="origin-top scale-[0.45] sm:scale-[0.6] md:scale-[0.8] lg:scale-100 transition-transform">
                 {/* A4 Document Container */}
                 <div id="billing-report" className="a4-document pdf-bg-white mx-auto shadow-2xl relative overflow-hidden print:shadow-none print:scale-100">
-              
-              {/* Header - Navy Background with Centered Logo */}
-              <div className="absolute top-0 left-0 w-full h-[160px] pdf-bg-navy overflow-hidden flex items-center justify-center">
-                {/* The Logo - Original proportions, elegant size, no cropping */}
-                <img 
-                  src={formData.logo} 
-                  alt="Logo Contador de Padarias" 
-                  className="h-28 w-auto object-contain relative z-20"
-                  crossOrigin="anonymous"
-                />
-                
-                {/* The Curve - White ellipse at the bottom */}
-                <div 
-                  className="absolute bottom-[-90px] left-[-25%] w-[150%] h-[160px] pdf-bg-white z-10" 
-                  style={{ borderRadius: '100%' }}
-                />
-              </div>
 
-              {/* Main Content Area */}
-              <div className="relative z-10 pt-[150px] px-[20mm] pb-6">
-                
-                {/* Identification Box - Match Print Style Exactly */}
-                <div className="pdf-border-black p-2.5 mb-2 text-center relative z-10 mx-auto w-full">
-                  <h3 className="text-[12px] font-bold pdf-text-black uppercase mb-0.5 tracking-tight">
-                    {formData.companyName || 'RAZÃO SOCIAL DA EMPRESA'}
-                  </h3>
-                  <div className="space-y-0">
-                    <p className="text-[10px] pdf-text-black">CNPJ: {formData.cnpj || '00.000.000/0001-00'}</p>
-                    <p className="text-[10px] pdf-text-black">Endereço: {formData.address || 'ENDEREÇO'}</p>
-                    <p className="text-[10px] pdf-text-black">Município: {formData.city || 'RECIFE'}</p>
-                    <p className="text-[11px] font-bold pdf-text-black mt-1">
-                      Relatório de Faturamento de {formData.periodStart ? formatFullMonthYear(formData.periodStart) : 'MM/AAAA'} até {formData.periodEnd ? formatFullMonthYear(formData.periodEnd) : 'MM/AAAA'}
+                  {/* Header - Navy Background with Centered Logo */}
+                  <div className="absolute top-0 left-0 w-full h-[160px] pdf-bg-navy overflow-hidden flex items-center justify-center">
+                    {/* The Logo - Original proportions, elegant size, no cropping */}
+                    <img
+                      src={formData.logo}
+                      alt="Logo Contador de Padarias"
+                      className="h-28 w-auto object-contain relative z-20"
+                      crossOrigin="anonymous"
+                    />
+
+                    {/* The Curve - White ellipse at the bottom */}
+                    <div
+                      className="absolute bottom-[-90px] left-[-25%] w-[150%] h-[160px] pdf-bg-white z-10"
+                      style={{ borderRadius: '100%' }}
+                    />
+                  </div>
+
+                  {/* Main Content Area */}
+                  <div className="relative z-10 pt-[150px] px-[20mm] pb-6">
+
+                    {/* Identification Box - Match Print Style Exactly */}
+                    <div className="pdf-border-black p-2.5 mb-2 text-center relative z-10 mx-auto w-full">
+                      <h3 className="text-[12px] font-bold pdf-text-black uppercase mb-0.5 tracking-tight">
+                        {formData.companyName || 'RAZÃO SOCIAL DA EMPRESA'}
+                      </h3>
+                      <div className="space-y-0">
+                        <p className="text-[10px] pdf-text-black">CNPJ: {formData.cnpj || '00.000.000/0001-00'}</p>
+                        <p className="text-[10px] pdf-text-black">Endereço: {formData.address || 'ENDEREÇO'}</p>
+                        <p className="text-[10px] pdf-text-black">Município: {formData.city || 'RECIFE'}</p>
+                        <p className="text-[11px] font-bold pdf-text-black mt-1">
+                          Relatório de Faturamento de {formData.periodStart ? formatFullMonthYear(formData.periodStart) : 'MM/AAAA'} até {formData.periodEnd ? formatFullMonthYear(formData.periodEnd) : 'MM/AAAA'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Billing Table */}
+                    <div className="w-full">
+                      {formData.monthlyBilling.length > 12 ? (
+                        <div className="grid grid-cols-2 gap-x-12">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="border-b-2 pdf-border-slate-200">
+                                <th className="text-left py-1.5 text-[11px] font-bold pdf-text-slate-800">Mês / Ano</th>
+                                <th className="text-right py-1.5 text-[11px] font-bold pdf-text-slate-800">Receita Bruta</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {formData.monthlyBilling.slice(0, Math.ceil(formData.monthlyBilling.length / 2)).map((item, index) => (
+                                <tr key={index} className="border-b pdf-border-slate-100">
+                                  <td className="py-1 text-[11px] pdf-text-slate-700">{formatMonthForReport(item.month)}</td>
+                                  <td className="py-1 text-[11px] pdf-text-slate-700 text-right font-mono">{formatCurrency(item.value)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="border-b-2 pdf-border-slate-200">
+                                <th className="text-left py-1.5 text-[11px] font-bold pdf-text-slate-800">Mês / Ano</th>
+                                <th className="text-right py-1.5 text-[11px] font-bold pdf-text-slate-800">Receita Bruta</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {formData.monthlyBilling.slice(Math.ceil(formData.monthlyBilling.length / 2)).map((item, index) => (
+                                <tr key={index} className="border-b pdf-border-slate-100">
+                                  <td className="py-1 text-[11px] pdf-text-slate-700">{formatMonthForReport(item.month)}</td>
+                                  <td className="py-1 text-[11px] pdf-text-slate-700 text-right font-mono">{formatCurrency(item.value)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <table className="w-full border-collapse">
+                          <thead>
+                            <tr className="border-b-2 pdf-border-slate-200">
+                              <th className="text-left py-1.5 text-[11px] font-bold pdf-text-slate-800">Mês / Ano</th>
+                              <th className="text-right py-1.5 text-[11px] font-bold pdf-text-slate-800">Receita Bruta</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.monthlyBilling.map((item, index) => (
+                              <tr key={index} className="border-b pdf-border-slate-100">
+                                <td className="py-1 text-[11px] pdf-text-slate-700">{formatMonthForReport(item.month)}</td>
+                                <td className="py-1 text-[11px] pdf-text-slate-700 text-right font-mono">{formatCurrency(item.value)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+
+                      {/* Total Section */}
+                      <div className="mt-2 flex justify-between items-center border-t-2 pdf-border-navy pt-1.5">
+                        <span className="text-xs font-bold pdf-text-slate-900">Total Geral</span>
+                        <span className="text-sm font-bold pdf-text-navy font-mono">{formatCurrency(totalBilling)}</span>
+                      </div>
+
+                      {/* Date and Signature - Moved right below total */}
+                      <div className="mt-8 text-center">
+                        <p className="text-[10px] pdf-text-slate-700 mb-16">{formData.reportCity || 'Cidade'}, {formData.reportDate || 'Data'}</p>
+
+                        <div className="max-w-[350px] mx-auto">
+                          <div className="border-t pdf-border-slate-900 mb-1"></div>
+                          <p className="text-[10px] font-bold pdf-text-slate-900 uppercase">{formData.accountantName || 'NOME DO CONTADOR'}</p>
+                          <p className="text-[10px] pdf-text-slate-600">
+                            CRC: {formData.accountantCrc || 'PE-020181/O-1'} &nbsp;&nbsp; CPF: {formData.accountantCpf || '010.212.714-03'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer - Locked at the absolute bottom of the A4 document */}
+                  <div className="absolute bottom-8 left-0 w-full text-center px-[20mm] z-20">
+                    <p className="text-[9px] pdf-text-slate-400 uppercase tracking-widest leading-relaxed font-medium mb-1">
+                      RIO MAR TRADE CENTER 3, AVENIDA REPÚBLICA DO LÍBANO, 251, SALA 2801 TORRE C ANDAR 28, PINA, RECIFE
+                    </p>
+                    <p className="text-[10px] pdf-text-slate-500 font-bold uppercase tracking-wide">
+                      E-MAIL: contato@contadordepadaria.com.br &nbsp;&nbsp;|&nbsp;&nbsp; SITE: www.cptoconnect.com.br
                     </p>
                   </div>
                 </div>
-
-                {/* Billing Table */}
-                <div className="w-full">
-                  {formData.monthlyBilling.length > 12 ? (
-                    <div className="grid grid-cols-2 gap-x-12">
-                      <table className="w-full border-collapse">
-                        <thead>
-                          <tr className="border-b-2 pdf-border-slate-200">
-                            <th className="text-left py-1.5 text-[11px] font-bold pdf-text-slate-800">Mês / Ano</th>
-                            <th className="text-right py-1.5 text-[11px] font-bold pdf-text-slate-800">Receita Bruta</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.monthlyBilling.slice(0, Math.ceil(formData.monthlyBilling.length / 2)).map((item, index) => (
-                            <tr key={index} className="border-b pdf-border-slate-100">
-                              <td className="py-1 text-[11px] pdf-text-slate-700">{formatMonthForReport(item.month)}</td>
-                              <td className="py-1 text-[11px] pdf-text-slate-700 text-right font-mono">{formatCurrency(item.value)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      <table className="w-full border-collapse">
-                        <thead>
-                          <tr className="border-b-2 pdf-border-slate-200">
-                            <th className="text-left py-1.5 text-[11px] font-bold pdf-text-slate-800">Mês / Ano</th>
-                            <th className="text-right py-1.5 text-[11px] font-bold pdf-text-slate-800">Receita Bruta</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.monthlyBilling.slice(Math.ceil(formData.monthlyBilling.length / 2)).map((item, index) => (
-                            <tr key={index} className="border-b pdf-border-slate-100">
-                              <td className="py-1 text-[11px] pdf-text-slate-700">{formatMonthForReport(item.month)}</td>
-                              <td className="py-1 text-[11px] pdf-text-slate-700 text-right font-mono">{formatCurrency(item.value)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="border-b-2 pdf-border-slate-200">
-                          <th className="text-left py-1.5 text-[11px] font-bold pdf-text-slate-800">Mês / Ano</th>
-                          <th className="text-right py-1.5 text-[11px] font-bold pdf-text-slate-800">Receita Bruta</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.monthlyBilling.map((item, index) => (
-                          <tr key={index} className="border-b pdf-border-slate-100">
-                            <td className="py-1 text-[11px] pdf-text-slate-700">{formatMonthForReport(item.month)}</td>
-                            <td className="py-1 text-[11px] pdf-text-slate-700 text-right font-mono">{formatCurrency(item.value)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {/* Total Section */}
-                  <div className="mt-2 flex justify-between items-center border-t-2 pdf-border-navy pt-1.5">
-                    <span className="text-xs font-bold pdf-text-slate-900">Total Geral</span>
-                    <span className="text-sm font-bold pdf-text-navy font-mono">{formatCurrency(totalBilling)}</span>
-                  </div>
-
-                  {/* Date and Signature - Moved right below total */}
-                  <div className="mt-8 text-center">
-                    <p className="text-[10px] pdf-text-slate-700 mb-16">{formData.reportCity || 'Cidade'}, {formData.reportDate || 'Data'}</p>
-                    
-                    <div className="max-w-[350px] mx-auto">
-                      <div className="border-t pdf-border-slate-900 mb-1"></div>
-                      <p className="text-[10px] font-bold pdf-text-slate-900 uppercase">{formData.accountantName || 'NOME DO CONTADOR'}</p>
-                      <p className="text-[10px] pdf-text-slate-600">
-                        CRC: {formData.accountantCrc || 'PE-020181/O-1'} &nbsp;&nbsp; CPF: {formData.accountantCpf || '010.212.714-03'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer - Locked at the absolute bottom of the A4 document */}
-              <div className="absolute bottom-8 left-0 w-full text-center px-[20mm] z-20">
-                <p className="text-[9px] pdf-text-slate-400 uppercase tracking-widest leading-relaxed font-medium mb-1">
-                  RIO MAR TRADE CENTER 3, AVENIDA REPÚBLICA DO LÍBANO, 251, SALA 2801 TORRE C ANDAR 28, PINA, RECIFE
-                </p>
-                <p className="text-[10px] pdf-text-slate-500 font-bold uppercase tracking-wide">
-                  E-MAIL: contato@contadordepadaria.com.br &nbsp;&nbsp;|&nbsp;&nbsp; SITE: www.cptoconnect.com.br
-                </p>
               </div>
             </div>
-          </div>
-        </div>
-      </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
