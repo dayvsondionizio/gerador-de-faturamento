@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 import {
@@ -15,9 +15,11 @@ import {
   Loader2,
   Plus,
   Trash2,
-  ChevronDown
+  ChevronDown,
+  Upload
 } from 'lucide-react';
 import { BillingFormData, MonthlyBilling } from './types';
+import { parsePGDASFile } from './services/pgdasService';
 
 const MONTHS_BR = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -99,6 +101,7 @@ export default function App() {
   const [isConfirmingClear, setIsConfirmingClear] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isLogoLoaded, setIsLogoLoaded] = useState(false);
+  const [isParsingPGDAS, setIsParsingPGDAS] = useState(false);
 
   // Pre-load logo as Base64 via proxy to bypass CORS
   useEffect(() => {
@@ -137,6 +140,36 @@ export default function App() {
     if (name === 'accountantCpf') maskedValue = maskCPF(value);
 
     setFormData(prev => ({ ...prev, [name]: maskedValue }));
+  };
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Por favor, envie um arquivo PDF do PGDAS.');
+      return;
+    }
+
+    setIsParsingPGDAS(true);
+    try {
+      const extractedData = await parsePGDASFile(file);
+      
+      setFormData(prev => ({
+        ...prev,
+        monthlyBilling: extractedData.monthlyBilling.map(item => ({
+          month: item.month,
+          value: item.value
+        }))
+      }));
+      
+      alert('Faturamento extraído com sucesso do PGDAS!');
+    } catch (error) {
+      console.error('Erro ao processar PGDAS:', error);
+      alert('Erro ao ler o arquivo PGDAS. Verifique se o arquivo é válido ou tente novamente.');
+    } finally {
+      setIsParsingPGDAS(false);
+    }
   };
 
   const handleBillingChange = (index: number, field: keyof MonthlyBilling, value: string) => {
@@ -360,6 +393,29 @@ export default function App() {
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-navy-900 tracking-tight px-4">Gerador de Relatório de Faturamento</h1>
               <p className="text-slate-500 mt-2 px-4">Preencha os dados abaixo para gerar o documento oficial</p>
+
+              <div className="mt-6 flex flex-col items-center gap-4">
+                <label className="relative group cursor-pointer">
+                  <div className={`flex items-center gap-3 px-6 py-3 rounded-2xl border-2 border-dashed transition-all ${isParsingPGDAS ? 'bg-slate-50 border-navy-300' : 'bg-white border-slate-200 hover:border-navy-400 hover:bg-navy-50'}`}>
+                    {isParsingPGDAS ? (
+                      <Loader2 className="w-5 h-5 text-navy-600 animate-spin" />
+                    ) : (
+                      <Upload className="w-5 h-5 text-navy-600 group-hover:scale-110 transition-transform" />
+                    )}
+                    <div className="text-left">
+                      <p className="text-sm font-bold text-navy-900">{isParsingPGDAS ? 'Lendo PGDAS...' : 'Importar do arquivo PGDAS'}</p>
+                      <p className="text-[10px] text-slate-400 font-medium">Extrai CNPJ e Faturamento automaticamente</p>
+                    </div>
+                  </div>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                    disabled={isParsingPGDAS}
+                  />
+                </label>
+              </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
