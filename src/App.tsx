@@ -157,13 +157,15 @@ export default function App() {
       
       setFormData(prev => ({
         ...prev,
+        companyName: extractedData.companyName || prev.companyName,
+        cnpj: extractedData.cnpj || prev.cnpj,
         monthlyBilling: extractedData.monthlyBilling.map(item => ({
           month: item.month,
           value: item.value
         }))
       }));
       
-      alert('Faturamento extraído com sucesso do PGDAS!');
+      alert(`Faturamento extraído com sucesso! ${extractedData.monthlyBilling.length} meses encontrados.`);
     } catch (error) {
       console.error('Erro ao processar PGDAS:', error);
       alert('Erro ao ler o arquivo PGDAS. Verifique se o arquivo é válido ou tente novamente.');
@@ -812,7 +814,7 @@ export default function App() {
 
                       {/* Date and Signature - Moved right below total */}
                       <div className="mt-8 text-center">
-                        <p className="text-[10px] pdf-text-slate-700 mb-16">{formData.reportCity || 'Cidade'}, {formData.reportDate || 'Data'}</p>
+                        <p className="text-[10px] pdf-text-slate-700 mb-32">{formData.reportCity || 'Cidade'}, {formData.reportDate || 'Data'}</p>
 
                         <div className="max-w-[350px] mx-auto">
                           <div className="border-t pdf-border-slate-900 mb-1"></div>

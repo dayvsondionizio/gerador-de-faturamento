@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/genai";
+import Groq from "groq-sdk";
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
-const genAI = new GoogleGenerativeAI(API_KEY);
+const API_KEY = import.meta.env.VITE_GROQ_API_KEY || "";
+const client = new Groq({ apiKey: API_KEY });
 
 export interface ExtractedPGDAS {
   companyName: string;
@@ -13,9 +13,6 @@ export interface ExtractedPGDAS {
 }
 
 export async function parsePGDASFile(file: File): Promise<ExtractedPGDAS> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-  // Convert file to base64
   const base64Promise = new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve((reader.result as string).split(',')[1]);
@@ -45,22 +42,28 @@ export async function parsePGDASFile(file: File): Promise<ExtractedPGDAS> {
     }
   `;
 
-  const result = await model.generateContent([
-    {
-      inlineData: {
-        data: base64Data,
-        mimeType: file.type
+  const chatCompletion = await client.chat.completions.create({
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          {
+            type: "image_url",
+            image_url: {
+              url: `data:${file.type};base64,${base64Data}`
+            }
+          }
+        ]
       }
-    },
-    prompt
-  ]);
+    ],
+    model: "llama-3.2-90b-vision-preview",
+    temperature: 0.3,
+    response_format: { type: "json_object" }
+  });
 
-  const response = await result.response;
-  const text = response.text();
-  
-  // Clean potential markdown blocks from Gemini response
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("Não foi possível extrair dados do PGDAS.");
-  
-  return JSON.parse(jsonMatch[0]);
+  const text = chatCompletion.choices[0]?.message?.content;
+  if (!text) throw new Error("Não foi possível extrair dados do PGDAS.");
+
+  return JSON.parse(text);
 }
