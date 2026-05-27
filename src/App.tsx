@@ -72,9 +72,9 @@ const INITIAL_DATA: BillingFormData = {
   periodStart: '',
   periodEnd: '',
   monthlyBilling: [],
-  accountantName: 'JORGE ANDRE DOS SANTOS VASCONCELOS',
-  accountantCrc: 'PE-020181/O-1',
-  accountantCpf: '010.212.714-03',
+  accountantName: '',
+  accountantCrc: '',
+  accountantCpf: '',
   reportDate: '',
   reportCity: '',
   logo: 'https://minio.contadordepadaria.com/api/v1/buckets/typebot/objects/download?preview=true&prefix=logos%2FContador%20de%20Padarias%2FLogo%20-%20CP%20AZUL.png&version_id=null'
@@ -766,9 +766,9 @@ export default function App() {
 
                         <div className="max-w-[350px] mx-auto">
                           <div className="border-t pdf-border-slate-900 mb-1"></div>
-                          <p className="text-[10px] font-bold pdf-text-slate-900 uppercase">{formData.accountantName || 'NOME DO CONTADOR'}</p>
+                          <p className="text-[10px] font-bold pdf-text-slate-900 uppercase">{formData.accountantName || ''}</p>
                           <p className="text-[10px] pdf-text-slate-600">
-                            CRC: {formData.accountantCrc || 'PE-020181/O-1'} &nbsp;&nbsp; CPF: {formData.accountantCpf || '010.212.714-03'}
+                            {formData.accountantCrc ? `CRC: ${formData.accountantCrc}` : ''} &nbsp;&nbsp; {formData.accountantCpf ? `CPF: ${formData.accountantCpf}` : ''}
                           </p>
                         </div>
                       </div>
