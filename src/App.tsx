@@ -77,7 +77,7 @@ const INITIAL_DATA: BillingFormData = {
   accountantCpf: '',
   reportDate: '',
   reportCity: '',
-  logo: 'https://minio.contadordepadaria.com/api/v1/buckets/typebot/objects/download?preview=true&prefix=logos%2FContador%20de%20Padarias%2FLogo%20-%20CP%20AZUL.png&version_id=null'
+  logo: '/logo-cp.png'
 };
 
 export default function App() {
@@ -102,15 +102,12 @@ export default function App() {
   const [isLogoLoaded, setIsLogoLoaded] = useState(false);
 
 
-  // Pre-load logo as Base64 via proxy to bypass CORS
+  // Pre-load logo as Base64 from local file for reliable PDF embedding
   useEffect(() => {
-    const proxyUrl = '/api/logo-proxy';
-
     const loadImage = async () => {
       try {
-        const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error('Proxy fetch failed');
-
+        const response = await fetch('/logo-cp.png');
+        if (!response.ok) throw new Error('Logo fetch failed');
         const blob = await response.blob();
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -120,14 +117,11 @@ export default function App() {
         };
         reader.readAsDataURL(blob);
       } catch (err) {
-        console.error('Error loading logo via proxy:', err);
-        // Fallback to direct URL if proxy fails (though proxy is more reliable for CORS)
-        const logoUrl = 'https://minio.contadordepadaria.com/api/v1/buckets/typebot/objects/download?preview=true&prefix=logos%2FContador%20de%20Padarias%2FLogo%20-%20CP%20AZUL.png&version_id=null';
-        setFormData(prev => ({ ...prev, logo: logoUrl }));
+        console.error('Error loading logo:', err);
+        setFormData(prev => ({ ...prev, logo: '/logo-cp.png' }));
         setIsLogoLoaded(true);
       }
     };
-
     loadImage();
   }, []);
 
@@ -801,7 +795,7 @@ export default function App() {
         /* PDF Compatibility Classes (Hex-based colors to avoid oklch/oklab errors) */
         .pdf-text-white { color: #ffffff !important; }
         .pdf-bg-white { background-color: #ffffff !important; }
-        .pdf-bg-navy { background-color: #0B0F7A !important; }
+        .pdf-bg-navy { background-color: #000066 !important; }
         .pdf-text-navy { color: #0B0F7A !important; }
         .pdf-border-navy-light { border-color: #d1d4f0 !important; } /* #0B0F7A at 20% opacity over white */
         .pdf-border-navy { border-color: #0B0F7A !important; }
