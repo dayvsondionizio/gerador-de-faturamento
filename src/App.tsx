@@ -795,7 +795,7 @@ export default function App() {
         /* PDF Compatibility Classes (Hex-based colors to avoid oklch/oklab errors) */
         .pdf-text-white { color: #ffffff !important; }
         .pdf-bg-white { background-color: #ffffff !important; }
-        .pdf-bg-navy { background-color: #000066 !important; }
+        .pdf-bg-navy { background-color: #0B0F7A !important; }
         .pdf-text-navy { color: #0B0F7A !important; }
         .pdf-border-navy-light { border-color: #d1d4f0 !important; } /* #0B0F7A at 20% opacity over white */
         .pdf-border-navy { border-color: #0B0F7A !important; }
